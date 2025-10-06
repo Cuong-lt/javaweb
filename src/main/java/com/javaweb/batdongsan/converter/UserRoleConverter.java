@@ -16,7 +16,7 @@ public class UserRoleConverter {
         UserRoleResponse userRoleResponse = new UserRoleResponse();
 
         userRoleResponse.setId(userRole.getId());
-        userRoleResponse.setUserName(userRole.getUser().getUserName());
+        userRoleResponse.setUserName(userRole.getUser().getName());
         userRoleResponse.setCode(userRole.getRole().getCode());
         userRoleResponse.setRoleName(userRole.getRole().getRoleName());
         userRoleResponse.setCreatedDate(userRole.getCreatedDate());

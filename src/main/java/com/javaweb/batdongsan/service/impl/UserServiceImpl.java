@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
     public UserResponse createRequest(UserCreationRequest request){
         User user = userConverter.toEntity(request);
-        if(userRepository.existsByUserName(user.getUserName())){
+        if(userRepository.existsByName(user.getName())){
             throw new AppException(ErrorCode.USER_EXISTED);
         }
         userRepository.save(user);
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse getMyInfo() {
         SecurityContext context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
-        User user = userRepository.findByUserName(name)
+        User user = userRepository.findByName(name)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         UserResponse userResponse = userConverter.toResponse(user);
         return userResponse;
@@ -92,12 +92,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse register(RegisterRequest request) {
-        if(userRepository.existsByUserName(request.getUserName())){
+        if(userRepository.existsByName(request.getName())){
             throw new AppException(ErrorCode.USER_EXISTED);
         }
         String roleCode = request.getRole();
         if(roleCode == null){
-            roleCode = "CUSTOMER";
+            roleCode = "customer";
         }
 
         User user = userConverter.toEntity(request);

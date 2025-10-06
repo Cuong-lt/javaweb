@@ -14,14 +14,14 @@ import javax.naming.AuthenticationException;
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(Exception.class)
-    ResponseEntity<ApiResponse> handleException(Exception ex) {
-        ApiResponse response = new ApiResponse();
-        response.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
-        response.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
-        return ResponseEntity.status(ErrorCode.UNCATEGORIZED_EXCEPTION.getStatusCode())
-                .body(response);
-    }
+//    @ExceptionHandler(Exception.class)
+//    ResponseEntity<ApiResponse> handleException(Exception ex) {
+//        ApiResponse response = new ApiResponse();
+//        response.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
+//        response.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
+//        return ResponseEntity.status(ErrorCode.UNCATEGORIZED_EXCEPTION.getStatusCode())
+//                .body(response);
+//    }
 
     @ExceptionHandler(AppException.class)
     ResponseEntity<ApiResponse> handleAppException(AppException ex) {

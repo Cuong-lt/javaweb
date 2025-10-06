@@ -21,7 +21,17 @@ public enum ErrorCode {
     USER_ROLE_NOT_FOUND(404,"User with role not found" ,HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(401,"unauthenticated",HttpStatus.UNAUTHORIZED),
     INVALID_TOKEN(401,"Token invalid",HttpStatus.UNAUTHORIZED),
-    UNAUTHORIZED(403,"You are not authorized",HttpStatus.FORBIDDEN)
+    UNAUTHORIZED(403,"You are not authorized",HttpStatus.FORBIDDEN),
+    CATEGORY_EXISTED(400,"Category existed",HttpStatus.BAD_REQUEST),
+    CATEGORY_NOT_FOUND(404,"Category not found",HttpStatus.NOT_FOUND),
+    TYPE_EXISTED(400,"Type existed",HttpStatus.BAD_REQUEST),
+    TYPE_NOT_FOUND(404,"Category not found",HttpStatus.NOT_FOUND),
+    STATUS_EXISTED(400,"Status existed",HttpStatus.BAD_REQUEST),
+    STATUS_NOT_FOUND(404,"Status not found",HttpStatus.NOT_FOUND),
+    INVALID_OTP(400, "otp is invalid",HttpStatus.BAD_REQUEST),
+    OTP_EXPIRED(400,"otp is expired",HttpStatus.BAD_REQUEST),
+    PROPERTY_EXISTED(400,"property existed",HttpStatus.BAD_REQUEST)
+
     ;
 
     int code;

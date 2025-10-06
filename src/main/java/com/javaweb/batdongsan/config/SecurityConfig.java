@@ -27,8 +27,18 @@ public class SecurityConfig {
     @Autowired
     CustomJwtDecoder customJwtDecoder;
 
-    private final String[] PUBLIC_POST_ENDPOINT = {"/api/users/create","/api/users/register","/api/auth/log-in",
-            "/api/auth/log-out", "/api/auth/valid-token","/api/auth/refresh","/api/user_roles/assign"};
+    private final String[] PUBLIC_POST_ENDPOINT = {"/api/users/create", "/api/users/register",
+            "/api/auth/log-in", "/api/auth/log-out", "/api/auth/valid-token",
+            "/api/auth/refresh", "/api/user_roles/assign",
+            "/api/property-categories/**", "/api/property-types/**",
+            "/api/roles/**", "/api/user_roles/**",
+            "/api/property-statuses/**","/api/property/**",
+            "/api/otp", "/api/reset-password"};
+    private final String[] PUBLIC_GET_ENDPOINT = {"/api/roles/**", "/api/user_roles/**",
+            "/api/property-categories/**", "/api/property-types/**",
+            "/api/property-statuses/**"};
+
+    //"/api/users/**"
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
@@ -37,13 +47,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(request ->
-                request.requestMatchers(HttpMethod.POST,PUBLIC_POST_ENDPOINT).permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/user_roles/getAll").hasRole("ADMIN")
+                request.requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINT).permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINT).permitAll()
                         .anyRequest().authenticated()
         );
         http.oauth2ResourceServer(oAuth2 -> oAuth2
                 .jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
-                            .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                 .accessDeniedHandler(new JwtAccessDeniedHandler())
         );
@@ -53,7 +63,7 @@ public class SecurityConfig {
 
 
     @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter(){
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
 
