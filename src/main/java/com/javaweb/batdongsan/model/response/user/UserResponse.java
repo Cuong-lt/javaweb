@@ -12,13 +12,9 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse {
     Long id;
-    String userName;
-    String password;
-    String fullName;
+    String name;
     String phone;
     String email;
-    String avatar;
-    Integer status;
     LocalDateTime createdDate;
     LocalDateTime modifiedDate;
 //    String modifiedBy;

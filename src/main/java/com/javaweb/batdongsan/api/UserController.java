@@ -36,7 +36,7 @@ public class UserController {
         return response;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @GetMapping("/getAllUsers")
     public ApiResponse<List<UserResponse>> getAllUsers(){
         ApiResponse<List<UserResponse>> response = new ApiResponse<>();

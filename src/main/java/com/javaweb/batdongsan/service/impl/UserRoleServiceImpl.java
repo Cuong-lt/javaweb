@@ -35,7 +35,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     @Override
     public UserRoleResponse addRoleToUser(UserRoleRequest request) {
-        User user = userRepository.findByUserName(request.getUserName())
+        User user = userRepository.findByName(request.getUserName())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         Role role = roleRepository.findByCode(request.getCode())
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
@@ -69,7 +69,7 @@ public class UserRoleServiceImpl implements UserRoleService {
     public UserRoleResponse updateUserRoleById(Long id, UserRoleRequest request) {
         UserRole userRole = userRoleRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_ROLE_NOT_FOUND));
-        User user = userRepository.findByUserName(request.getUserName())
+        User user = userRepository.findByName(request.getUserName())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         Role role = roleRepository.findByCode(request.getCode())
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
@@ -89,8 +89,8 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     @Override
-    public List<UserRoleResponse> getByUserName(String userName) {
-        List<UserRole> userRoleList = userRoleRepository.findByUser_UserName(userName);
+    public List<UserRoleResponse> getByUserName(String name) {
+        List<UserRole> userRoleList = userRoleRepository.findByUser_Name(name);
         List<UserRoleResponse> userRoleResponseList = userRoleList.stream()
                 .map((userRole) -> userRoleConverter.toResponse(userRole))
                 .toList();

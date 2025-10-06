@@ -12,9 +12,6 @@ import lombok.experimental.FieldDefaults;
 public class UserUpdateRequest {
     @Size(min = 6, message = "USERNAME_PASSWORD_INVALID")
     String password;
-    String fullName;
     String phone;
     String email;
-    String avatar;
-    Integer status;
 }

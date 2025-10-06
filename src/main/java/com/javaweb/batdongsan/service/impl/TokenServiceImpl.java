@@ -38,12 +38,24 @@ public class TokenServiceImpl implements TokenService {
     @Value("${jwt.signerKey}")
     protected  String SIGNER_KEY;
 
+    @NonFinal
+    @Value("${jwt.valid-duration}")
+    protected  Long VALID_DURATION;
+
+    @NonFinal
+    @Value("${jwt.refreshable-duration}")
+    protected  Long REFRESHABLE_DURATION;
+
     @Override
-    public SignedJWT verifyToken(String token){
+    public SignedJWT verifyToken(String token, boolean isRefresh){
         try {
             JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
             SignedJWT signedJWT = SignedJWT.parse(token);
-            Date expireTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+            Date expireTime = (isRefresh) ?
+                    Date.from(signedJWT.getJWTClaimsSet().getIssueTime()
+                            .toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.HOURS))
+                    : signedJWT.getJWTClaimsSet().getExpirationTime();
+            // isRefresh: true - refresh token, false - access token
             boolean verified = signedJWT.verify(verifier);
             if(!(verified && expireTime.after(new Date()))){
                 throw new AppException(ErrorCode.UNAUTHENTICATED);
@@ -61,11 +73,11 @@ public class TokenServiceImpl implements TokenService {
     public String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(user.getUserName())
+                .subject(user.getName())
                 .issuer("cuong.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
+                        Instant.now().plus(VALID_DURATION, ChronoUnit.HOURS).toEpochMilli()
                 ))
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope",buildScope(user))

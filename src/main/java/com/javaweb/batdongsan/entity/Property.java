@@ -25,7 +25,7 @@ public class Property extends BaseEntity {
     Float area;// diện tích
     String address; //địa chỉ cụ thể
     String city; // thành phố nào
-    String district; // Quận Huyệ
+    String district; // Quận Huyện
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

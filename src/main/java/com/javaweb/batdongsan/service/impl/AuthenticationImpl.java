@@ -32,6 +32,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import java.text.ParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Slf4j
@@ -43,6 +44,15 @@ public class AuthenticationImpl implements AuthenticationService {
     @NonFinal
     @Value("${jwt.signerKey}")
     protected  String SIGNER_KEY;
+
+    @NonFinal
+    @Value("${jwt.valid-duration}")
+    protected  Long VALID_DURATION;
+
+    @NonFinal
+    @Value("${jwt.refreshable-duration}")
+    protected  Long REFRESHABLE_DURATION;
+
 
     @Autowired
     UserRepository userRepository;
@@ -59,7 +69,7 @@ public class AuthenticationImpl implements AuthenticationService {
 //    log-in
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        User user = userRepository.findByUserName(request.getUserName())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         boolean result = passwordEncoder.matches(request.getPassword(), user.getPassword());
         if (!result){
@@ -75,31 +85,38 @@ public class AuthenticationImpl implements AuthenticationService {
 //    log-out
     @Override
     public Void logout(LogOutRequest request){
-        var signedToken = tokenService.verifyToken(request.getToken());
+
         try {
+            SignedJWT signedToken = tokenService.verifyToken(request.getToken(),true);
+
             String jit = signedToken.getJWTClaimsSet().getJWTID();
-            Date expiryTime = signedToken.getJWTClaimsSet().getExpirationTime();
+            Date expiryTime = Date.from(signedToken.getJWTClaimsSet().getIssueTime()
+                    .toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.HOURS));
+
             InvalidatedToken invalidatedToken = new InvalidatedToken();
             invalidatedToken.setId(jit);
             invalidatedToken.setExpiryTime(expiryTime);
+
             invalidatedTokenRepository.save(invalidatedToken);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
-
-
-    return null;
+        catch (AppException e){
+            log.info("token already expired");
+        }
+        return null;
     }
 
     @Override
     public RefreshResponse refreshToken(RefreshRequest request) {
         String token = request.getToken();
-        SignedJWT signedJWT = tokenService.verifyToken(token);
+        SignedJWT signedJWT = tokenService.verifyToken(token,true);
 
         try{
             //        xoa token cu~ bang cach log-out
         String jit = signedJWT.getJWTClaimsSet().getJWTID();
-        Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+        Date expiryTime = Date.from(signedJWT.getJWTClaimsSet().getIssueTime()
+                .toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.HOURS));
         InvalidatedToken invalidatedToken = new InvalidatedToken();
         invalidatedToken.setId(jit);
         invalidatedToken.setExpiryTime(expiryTime);
@@ -107,7 +124,7 @@ public class AuthenticationImpl implements AuthenticationService {
 
 //        tao token moi bang userName
         String userName = signedJWT.getJWTClaimsSet().getSubject();
-        User user = userRepository.findByUserName(userName)
+        User user = userRepository.findByName(userName)
                     .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         String refreshToken = tokenService.generateToken(user);
 
@@ -128,7 +145,7 @@ public class AuthenticationImpl implements AuthenticationService {
             boolean isValid = true;
             IntrospectResponse introspectResponse = new IntrospectResponse();
             try {
-                tokenService.verifyToken(token);
+                tokenService.verifyToken(token,false);
             } catch (AppException e){
                 isValid = false;
             }

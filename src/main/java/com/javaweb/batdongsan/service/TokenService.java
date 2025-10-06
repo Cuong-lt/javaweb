@@ -5,7 +5,7 @@ import com.nimbusds.jwt.SignedJWT;
 
 public interface TokenService {
 
-    SignedJWT verifyToken(String token);
+    SignedJWT verifyToken(String token, boolean isRefresh);
 
     String generateToken(User user);
 }

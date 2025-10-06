@@ -18,24 +18,17 @@ import java.util.List;
 public class User extends BaseEntity{
 
     @Column(unique = true, nullable = false)
-    String userName;
-
-    @NotBlank(message = "Password must not be blank")
-    String password;
-
-    @NotBlank(message = "Full name must not be blank")
-    String fullName;
-
-    @Column(length = 10)
-    String phone;
+    String name;
 
     @Size(max = 500)
     String email;
 
+    @NotBlank(message = "Password must not be blank")
+    String password;
 
-    Integer status = 1;
-    String avatar;
-
+    @Column(length = 10)
+    String phone;
+    
 
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<UserRole> userRoles = new ArrayList<>();
