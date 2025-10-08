@@ -29,14 +29,17 @@ public class SecurityConfig {
 
     private final String[] PUBLIC_POST_ENDPOINT = {"/api/users/create", "/api/users/register",
             "/api/auth/log-in", "/api/auth/log-out", "/api/auth/valid-token",
-            "/api/auth/refresh", "/api/user_roles/assign",
+            "/api/auth/refresh",
             "/api/property-categories/**", "/api/property-types/**",
-            "/api/roles/**", "/api/user_roles/**",
-            "/api/property-statuses/**","/api/property/**",
+            "/api/roles/**",
+            "/api/property-statuses/**",
             "/api/otp", "/api/reset-password"};
     private final String[] PUBLIC_GET_ENDPOINT = {"/api/roles/**", "/api/user_roles/**",
             "/api/property-categories/**", "/api/property-types/**",
             "/api/property-statuses/**"};
+
+    private final String[] ADMIN_ENDPOINT = {"/api/user_roles/assign"};
+    private final String[] PROPERTY_ENDPOINT = {"/api/property/**"};
 
     //"/api/users/**"
     @Bean
@@ -49,6 +52,9 @@ public class SecurityConfig {
         http.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINT).permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINT).permitAll()
+                        .requestMatchers(HttpMethod.POST,ADMIN_ENDPOINT).hasRole("admin")
+                        .requestMatchers(HttpMethod.GET,PROPERTY_ENDPOINT).hasAnyRole("admin","agent")
+                        .requestMatchers(HttpMethod.POST,PROPERTY_ENDPOINT).hasAnyRole("admin","agent")
                         .anyRequest().authenticated()
         );
         http.oauth2ResourceServer(oAuth2 -> oAuth2
@@ -65,6 +71,7 @@ public class SecurityConfig {
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("scope");
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
