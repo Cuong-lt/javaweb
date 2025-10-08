@@ -39,6 +39,10 @@ public class UserRoleServiceImpl implements UserRoleService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         Role role = roleRepository.findByCode(request.getCode())
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+        boolean roleExists = userRoleRepository.existsByUserAndRole(user, role);
+        if (roleExists) {
+            throw new AppException(ErrorCode.ROLE_ALREADY_ASSIGNED);
+        }
 
         UserRole userRole = new UserRole();
         userRole.setUser(user);

@@ -1,5 +1,7 @@
 package com.javaweb.batdongsan.repository;
 
+import com.javaweb.batdongsan.entity.Role;
+import com.javaweb.batdongsan.entity.User;
 import com.javaweb.batdongsan.entity.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -10,4 +12,6 @@ import java.util.List;
 public interface UserRoleRepository extends JpaRepository<UserRole,Long> {
     List<UserRole> findByUser_Name(String name);
     List<UserRole> findByRole_Code(String code);
+
+    boolean existsByUserAndRole(User user, Role role);
 }

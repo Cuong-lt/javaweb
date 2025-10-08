@@ -4,6 +4,7 @@ import com.javaweb.batdongsan.entity.*;
 import com.javaweb.batdongsan.exception.AppException;
 import com.javaweb.batdongsan.exception.ErrorCode;
 import com.javaweb.batdongsan.model.request.property.PropertyCreateRequest;
+import com.javaweb.batdongsan.model.request.property.PropertyUpdateRequest;
 import com.javaweb.batdongsan.model.response.property.PropertyResponse;
 import com.javaweb.batdongsan.repository.*;
 import org.modelmapper.ModelMapper;
@@ -35,6 +36,26 @@ public class PropertyConverter {
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
         Property property = modelMapper.map(request,Property.class);
+        property.setUser(user);
+        property.setCategory(category);
+        property.setType(type);
+        property.setStatus(status);
+
+        return property;
+    }
+
+//    update
+    public Property toEntity(Property property, PropertyUpdateRequest request){
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        PropertyStatus status = propertyStatusRepository.findByName(request.getStatus())
+                .orElseThrow(() -> new AppException(ErrorCode.STATUS_NOT_FOUND));
+        PropertyType type = propertyTypeRepository.findByName(request.getType())
+                .orElseThrow(() -> new AppException(ErrorCode.TYPE_NOT_FOUND));
+        PropertyCategory category = propertyCategoryRepository.findByName(request.getCategory())
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+
+        modelMapper.map(request,property);
         property.setUser(user);
         property.setCategory(category);
         property.setType(type);
