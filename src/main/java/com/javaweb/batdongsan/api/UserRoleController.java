@@ -50,6 +50,18 @@ public class UserRoleController {
         response.setResult(userRoleService.getByRoleCode(code));
         return response;
     }
+    @GetMapping("/roleCodeEqualsCustomer")
+    public ApiResponse<List<UserRoleResponse>> getByRoleCodeEqualCustomer(){
+        ApiResponse<List<UserRoleResponse>> response = new ApiResponse<>();
+        response.setResult(userRoleService.getByRoleCodeEqualCustomer());
+        return response;
+    }
+    @GetMapping("/roleCodeEqualsAgent")
+    public ApiResponse<List<UserRoleResponse>> getByRoleCodeEqualAgent(){
+        ApiResponse<List<UserRoleResponse>> response = new ApiResponse<>();
+        response.setResult(userRoleService.getByRoleCodeEqualAgent());
+        return response;
+    }
 
     @PutMapping("/update/{id}")
     public ApiResponse<UserRoleResponse> updateUserRole(@PathVariable Long id,

@@ -31,11 +31,11 @@ public class SecurityConfig {
             "/api/auth/log-in", "/api/auth/log-out", "/api/auth/valid-token",
             "/api/auth/refresh",
             "/api/property-categories/**", "/api/property-types/**",
-            "/api/roles/**",
+            "/api/roles/**","/api/images/**",
             "/api/property-statuses/**",
             "/api/otp", "/api/reset-password"};
     private final String[] PUBLIC_GET_ENDPOINT = {"/api/roles/**", "/api/user_roles/**",
-            "/api/property-categories/**", "/api/property-types/**",
+            "/api/property-categories/**", "/api/property-types/**","/api/images/**",
             "/api/property-statuses/**"};
 
     private final String[] ADMIN_ENDPOINT = {"/api/user_roles/assign"};
