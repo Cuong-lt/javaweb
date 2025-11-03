@@ -32,7 +32,8 @@ public enum ErrorCode {
     OTP_EXPIRED(400,"otp is expired",HttpStatus.BAD_REQUEST),
     PROPERTY_EXISTED(400,"property existed",HttpStatus.BAD_REQUEST),
     PROPERTY_NOT_FOUND(404,"property not found" ,HttpStatus.NOT_FOUND ),
-    ROLE_ALREADY_ASSIGNED(400,"role already assigned for this customer" ,HttpStatus.BAD_REQUEST );
+    ROLE_ALREADY_ASSIGNED(400,"role already assigned for this customer" ,HttpStatus.BAD_REQUEST ),
+    IMAGE_NOT_FOUND(404,"image not found" ,HttpStatus.NOT_FOUND );
 
     int code;
     String message;

@@ -19,4 +19,8 @@ public interface UserRoleService {
     List<UserRoleResponse> getByUserName(String userName);
 
     List<UserRoleResponse> getByRoleCode(String code);
+
+    List<UserRoleResponse> getByRoleCodeEqualCustomer();
+
+    List<UserRoleResponse> getByRoleCodeEqualAgent();
 }

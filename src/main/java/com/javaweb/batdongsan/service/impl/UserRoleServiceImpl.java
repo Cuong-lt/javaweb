@@ -109,4 +109,22 @@ public class UserRoleServiceImpl implements UserRoleService {
                 .toList();
         return userRoleResponseList;
     }
+
+    @Override
+    public List<UserRoleResponse> getByRoleCodeEqualCustomer() {
+        List<UserRole> userRoleList = userRoleRepository.findByRole_Code("CUSTOMER");
+        List<UserRoleResponse> userRoleResponseList = userRoleList.stream()
+                .map((userRole) -> userRoleConverter.toResponse(userRole))
+                .toList();
+        return userRoleResponseList;
+    }
+
+    @Override
+    public List<UserRoleResponse> getByRoleCodeEqualAgent() {
+        List<UserRole> userRoleList = userRoleRepository.findByRole_Code("AGENT");
+        List<UserRoleResponse> userRoleResponseList = userRoleList.stream()
+                .map(userRole -> userRoleConverter.toResponse(userRole))
+                .toList();
+        return userRoleResponseList;
+    }
 }
