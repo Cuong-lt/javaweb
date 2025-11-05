@@ -33,7 +33,8 @@ public enum ErrorCode {
     PROPERTY_EXISTED(400,"property existed",HttpStatus.BAD_REQUEST),
     PROPERTY_NOT_FOUND(404,"property not found" ,HttpStatus.NOT_FOUND ),
     ROLE_ALREADY_ASSIGNED(400,"role already assigned for this customer" ,HttpStatus.BAD_REQUEST ),
-    IMAGE_NOT_FOUND(404,"image not found" ,HttpStatus.NOT_FOUND );
+    IMAGE_NOT_FOUND(404,"image not found" ,HttpStatus.NOT_FOUND ),
+    PROJECT_NOT_FOUND(404,"project not found" ,HttpStatus.NOT_FOUND );
 
     int code;
     String message;
