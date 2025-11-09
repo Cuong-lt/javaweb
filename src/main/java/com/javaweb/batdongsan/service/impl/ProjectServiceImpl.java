@@ -7,6 +7,7 @@ import com.javaweb.batdongsan.exception.ErrorCode;
 import com.javaweb.batdongsan.model.request.project.ProjectRequest;
 import com.javaweb.batdongsan.model.response.project.ProjectResponse;
 import com.javaweb.batdongsan.repository.ProjectRepository;
+import com.javaweb.batdongsan.service.ActivityLogService;
 import com.javaweb.batdongsan.service.ProjectService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class ProjectServiceImpl implements ProjectService {
 
      ProjectRepository projectRepository;
      ProjectConverter projectConverter;
+     ActivityLogService activityLogService;
 
     @Override
     public List<ProjectResponse> getAllProjects() {
@@ -38,6 +40,8 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectResponse createProject(ProjectRequest request) {
        Project project =  projectConverter.toEntity(request);
        projectRepository.save(project);
+       activityLogService.log("CREATE ","ADMIN",
+               "Tạo dự án: " + project.getName(),"Project");
         return projectConverter.toResponse(project);
     }
 
@@ -65,6 +69,8 @@ public class ProjectServiceImpl implements ProjectService {
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
         project = projectConverter.toEntity(request);
         projectRepository.save(project);
+        activityLogService.log("UPDATE ","ADMIN",
+                "Cập nhật dự án: " + project.getName(),"Project");
         return projectConverter.toResponse(project);
     }
 
@@ -73,6 +79,8 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
         projectRepository.deleteById(id);
+        activityLogService.log("DELETE ","ADMIN",
+                "Xóa dự án: " + project.getName(),"Project");
         return null;
     }
 

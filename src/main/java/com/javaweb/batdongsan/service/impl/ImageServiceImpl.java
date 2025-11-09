@@ -8,6 +8,7 @@ import com.javaweb.batdongsan.exception.ErrorCode;
 import com.javaweb.batdongsan.model.response.image.ImageResponse;
 import com.javaweb.batdongsan.repository.ImageRepository;
 import com.javaweb.batdongsan.repository.PropertyRepository;
+import com.javaweb.batdongsan.service.ActivityLogService;
 import com.javaweb.batdongsan.service.ImageService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class ImageServiceImpl implements ImageService {
     ImageRepository imageRepository;
     PropertyRepository propertyRepository;
     ImageConverter imageConverter;
+    ActivityLogService activityLogService;
 
 
     @Override
@@ -60,6 +62,8 @@ public class ImageServiceImpl implements ImageService {
         image.setProperty(property);
         imageRepository.save(image);
 
+        activityLogService.log("UPLOAD IMAGE", "SYSTEM",
+                "Tải ảnh cho dự án : " + property.getTitle(), "Image");
         return imageConverter.toResponse(image);
     }
     @Override
@@ -102,6 +106,8 @@ public class ImageServiceImpl implements ImageService {
 
         image.setImageUrl("/uploads/images/" + fileName);
         imageRepository.save(image);
+        activityLogService.log("UPDATE IMAGE", "SYSTEM",
+                "Cập nhật ảnh id : " + image.getId(), "Image");
 
         return imageConverter.toResponse(image);
     }
@@ -130,5 +136,7 @@ public class ImageServiceImpl implements ImageService {
         } catch (IOException ignored) {}
 
         imageRepository.delete(image);
+        activityLogService.log("DELETE IMAGE", "SYSTEM",
+                "Xóa ảnh id : " + image.getId(), "Image");
     }
 }

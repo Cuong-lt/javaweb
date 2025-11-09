@@ -7,6 +7,7 @@ import com.javaweb.batdongsan.exception.ErrorCode;
 import com.javaweb.batdongsan.model.request.role.RoleRequest;
 import com.javaweb.batdongsan.model.response.role.RoleResponse;
 import com.javaweb.batdongsan.repository.RoleRepository;
+import com.javaweb.batdongsan.service.ActivityLogService;
 import com.javaweb.batdongsan.service.RoleService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,9 @@ public class RoleServiceImpl implements RoleService {
     RoleRepository roleRepository;
     @Autowired
     RoleConverter roleConverter;
+    @Autowired
+    ActivityLogService activityLogService;
+
     @Override
     public RoleResponse createRole(RoleRequest request) {
         Role role = roleConverter.toEntity(request);
@@ -32,6 +36,8 @@ public class RoleServiceImpl implements RoleService {
             throw new AppException(ErrorCode.ROLE_EXISTED);
         }
         roleRepository.save(role);
+        activityLogService.log("CREATE ", "ADMIN",
+                "Tạo vai trò: " + role.getRoleName(), "Role");
         return roleConverter.toResponse(role);
     }
 
@@ -57,6 +63,8 @@ public class RoleServiceImpl implements RoleService {
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
         role =  roleConverter.toEntity(role,request);
         roleRepository.save(role);
+        activityLogService.log("UPDATE ", "ADMIN",
+                "Cập nhật vai trò: " + role.getRoleName(), "Role");
         return roleConverter.toResponse(role);
     }
 
@@ -65,6 +73,8 @@ public class RoleServiceImpl implements RoleService {
         Role role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
         roleRepository.delete(role);
+        activityLogService.log("DELETE ", "ADMIN",
+                "Xóa vai trò: " + role.getRoleName(), "Role");
     }
 
 }
