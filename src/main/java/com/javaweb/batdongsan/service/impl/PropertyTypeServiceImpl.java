@@ -7,6 +7,7 @@ import com.javaweb.batdongsan.exception.ErrorCode;
 import com.javaweb.batdongsan.model.request.property_type.PropertyTypeRequest;
 import com.javaweb.batdongsan.model.response.property_type.PropertyTypeResponse;
 import com.javaweb.batdongsan.repository.PropertyTypeRepository;
+import com.javaweb.batdongsan.service.ActivityLogService;
 import com.javaweb.batdongsan.service.PropertyTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
 public class PropertyTypeServiceImpl implements PropertyTypeService {
     private final PropertyTypeRepository propertyTypeRepository;
     private final PropertyTypeConverter propertyTypeConverter;
+    private final ActivityLogService activityLogService;
 
     @Override
     public PropertyTypeResponse create(PropertyTypeRequest request) {
@@ -26,6 +28,8 @@ public class PropertyTypeServiceImpl implements PropertyTypeService {
         }
         PropertyType entity = propertyTypeConverter.toEntity(request);
         propertyTypeRepository.save(entity);
+        activityLogService.log("CREATE ", "ADMIN",
+                "Tạo loại bất động sản: " + entity.getName(), "PropertyType");
         return propertyTypeConverter.toResponse(entity);
     }
 
@@ -50,6 +54,8 @@ public class PropertyTypeServiceImpl implements PropertyTypeService {
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_NOT_FOUND));
         entity = propertyTypeConverter.toEntity(entity, request);
         propertyTypeRepository.save(entity);
+        activityLogService.log("UPDATE ", "ADMIN",
+                "Cập nhật loại bất động sản: " + entity.getName(), "PropertyType");
         return propertyTypeConverter.toResponse(entity);
     }
 
@@ -58,5 +64,7 @@ public class PropertyTypeServiceImpl implements PropertyTypeService {
         PropertyType entity = propertyTypeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_NOT_FOUND));
         propertyTypeRepository.delete(entity);
+        activityLogService.log("DELETE ", "ADMIN",
+                "Xóa loại bất động sản: " + entity.getName(), "PropertyType");
     }
 }

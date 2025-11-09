@@ -7,6 +7,7 @@ import com.javaweb.batdongsan.exception.ErrorCode;
 import com.javaweb.batdongsan.model.request.property_status.PropertyStatusRequest;
 import com.javaweb.batdongsan.model.response.property_status.PropertyStatusResponse;
 import com.javaweb.batdongsan.repository.PropertyStatusRepository;
+import com.javaweb.batdongsan.service.ActivityLogService;
 import com.javaweb.batdongsan.service.PropertyStatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
 public class PropertyStatusServiceImpl implements PropertyStatusService {
     private final PropertyStatusRepository propertyStatusRepository;
     private final PropertyStatusConverter propertyStatusConverter;
+    private final ActivityLogService activityLogService;
 
     @Override
     public PropertyStatusResponse create(PropertyStatusRequest request) {
@@ -26,6 +28,8 @@ public class PropertyStatusServiceImpl implements PropertyStatusService {
         }
         PropertyStatus entity = propertyStatusConverter.toEntity(request);
         propertyStatusRepository.save(entity);
+        activityLogService.log("CREATE ", "ADMIN",
+                "Tạo trạng thái bất động sản: " + entity.getName(), "PropertyStatus");
         return propertyStatusConverter.toResponse(entity);
     }
 
@@ -50,6 +54,8 @@ public class PropertyStatusServiceImpl implements PropertyStatusService {
                 .orElseThrow(() -> new AppException(ErrorCode.STATUS_NOT_FOUND));
         entity = propertyStatusConverter.toEntity(entity, request);
         propertyStatusRepository.save(entity);
+        activityLogService.log("UPDATE ", "ADMIN",
+                "Cập nhật trạng thái bất động sản: " + entity.getName(), "PropertyStatus");
         return propertyStatusConverter.toResponse(entity);
     }
 
@@ -58,5 +64,7 @@ public class PropertyStatusServiceImpl implements PropertyStatusService {
         PropertyStatus entity = propertyStatusRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.STATUS_NOT_FOUND));
         propertyStatusRepository.delete(entity);
+        activityLogService.log("DELETE ", "ADMIN",
+                "Xóa trạng thái bất động sản: " + entity.getName(), "PropertyStatus");
     }
 }

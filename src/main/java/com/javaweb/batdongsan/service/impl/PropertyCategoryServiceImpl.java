@@ -7,6 +7,7 @@ import com.javaweb.batdongsan.exception.ErrorCode;
 import com.javaweb.batdongsan.model.request.property_category.PropertyCategoryRequest;
 import com.javaweb.batdongsan.model.response.property_category.PropertyCategoryResponse;
 import com.javaweb.batdongsan.repository.PropertyCategoryRepository;
+import com.javaweb.batdongsan.service.ActivityLogService;
 import com.javaweb.batdongsan.service.PropertyCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
 public class PropertyCategoryServiceImpl implements PropertyCategoryService {
     private final PropertyCategoryRepository propertyCategoryRepository;
     private final PropertyCategoryConverter propertyCategoryConverter;
+    private final ActivityLogService activityLogService;
 
     @Override
     public PropertyCategoryResponse create(PropertyCategoryRequest request) {
@@ -26,6 +28,8 @@ public class PropertyCategoryServiceImpl implements PropertyCategoryService {
         }
         PropertyCategory entity = propertyCategoryConverter.toEntity(request);
         propertyCategoryRepository.save(entity);
+        activityLogService.log("CREATE ", "ADMIN",
+                "Tạo danh mục bất động sản: " + entity.getName(), "PropertyCategory");
         return propertyCategoryConverter.toResponse(entity);
     }
 
@@ -50,6 +54,8 @@ public class PropertyCategoryServiceImpl implements PropertyCategoryService {
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
         entity = propertyCategoryConverter.toEntity(entity, request);
         propertyCategoryRepository.save(entity);
+        activityLogService.log("UPDATE ", "ADMIN",
+                "Cập nhật danh mục bất động sản: " + entity.getName(), "PropertyCategory");
         return propertyCategoryConverter.toResponse(entity);
     }
 
@@ -58,5 +64,7 @@ public class PropertyCategoryServiceImpl implements PropertyCategoryService {
         PropertyCategory entity = propertyCategoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
         propertyCategoryRepository.delete(entity);
+        activityLogService.log("DELETE ", "ADMIN",
+                "Xóa danh mục bất động sản: " + entity.getName(), "PropertyCategory");
     }
 }

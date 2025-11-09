@@ -13,6 +13,7 @@ import com.javaweb.batdongsan.model.response.user.UserResponse;
 import com.javaweb.batdongsan.repository.RoleRepository;
 import com.javaweb.batdongsan.repository.UserRepository;
 import com.javaweb.batdongsan.repository.UserRoleRepository;
+import com.javaweb.batdongsan.service.ActivityLogService;
 import com.javaweb.batdongsan.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,8 @@ public class UserServiceImpl implements UserService {
     UserConverter userConverter;
     @Autowired
     RoleRepository roleRepository;
+    @Autowired
+    ActivityLogService activityLogService;
 
     public UserResponse createRequest(UserCreationRequest request){
         User user = userConverter.toEntity(request);
@@ -41,6 +44,8 @@ public class UserServiceImpl implements UserService {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
         userRepository.save(user);
+        activityLogService.log("CREATE ",user.getEmail(),
+                "Tạo người dùng: " + user.getEmail(),"User");
         return userConverter.toResponse(user);
     }
 
@@ -70,6 +75,8 @@ public class UserServiceImpl implements UserService {
 
         user = userConverter.toEntity(user,request);
         userRepository.save(user);
+        activityLogService.log("UPDATE ",user.getEmail(),
+                "Cập nhật người dùng: " + user.getEmail(),"User");
         return userConverter.toResponse(user);
     }
 
@@ -78,6 +85,8 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         userRepository.delete(user);
+        activityLogService.log("DELETE ",user.getEmail(),
+                "Xóa người dùng: " + user.getEmail(),"User");
     }
 
     @Override
