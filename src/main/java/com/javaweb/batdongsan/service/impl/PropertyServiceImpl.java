@@ -14,6 +14,7 @@ import com.javaweb.batdongsan.service.PropertyService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class PropertyServiceImpl implements PropertyService {
     PropertyRepository propertyRepository;
     ActivityLogService activityLogService;
     UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public PropertyResponse createProperty(PropertyCreateRequest request) {
@@ -91,4 +93,7 @@ public class PropertyServiceImpl implements PropertyService {
                 "Xóa bất động sản: " + property.getTitle(),"Property");
         return null;
     }
+
+
+
 }

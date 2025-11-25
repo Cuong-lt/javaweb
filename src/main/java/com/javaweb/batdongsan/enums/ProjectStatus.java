@@ -9,5 +9,5 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum ProjectStatus {
-    IN_PROGRESS, COMPLETED, PAUSED, NOT_STARTED;
+    IN_PROGRESS, COMPLETED, PAUSED, NOT_STARTED,REJECTED;
 }
