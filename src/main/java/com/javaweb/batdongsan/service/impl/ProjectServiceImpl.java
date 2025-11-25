@@ -2,6 +2,7 @@ package com.javaweb.batdongsan.service.impl;
 
 import com.javaweb.batdongsan.converter.ProjectConverter;
 import com.javaweb.batdongsan.entity.Project;
+import com.javaweb.batdongsan.enums.ProjectStatus;
 import com.javaweb.batdongsan.exception.AppException;
 import com.javaweb.batdongsan.exception.ErrorCode;
 import com.javaweb.batdongsan.model.request.project.ProjectRequest;
@@ -84,5 +85,47 @@ public class ProjectServiceImpl implements ProjectService {
         return null;
     }
 
+    @Override
+    public List<ProjectResponse> getByStatus(ProjectStatus status) {
+        List<Project> projectList = projectRepository.findByStatus(status)
+                .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
+        List<ProjectResponse> projectResponses = projectList.stream()
+                .map(project -> projectConverter.toResponse(project))
+                .toList();
+        return projectResponses;
+    }
 
+    @Override
+    public Integer countByStatus(ProjectStatus status) {
+        List<Project> projectList = projectRepository.findByStatus(status)
+                .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
+        return projectRepository.countByStatus(status);
+    }
+
+    @Override
+    public ProjectResponse updateProjectStatus(Long id) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
+        project.setStatus(ProjectStatus.IN_PROGRESS);
+        projectRepository.save(project);
+        return projectConverter.toResponse(project);
+    }
+
+    @Override
+    public ProjectResponse rejectProject(Long id) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
+        project.setStatus(ProjectStatus.REJECTED);
+        projectRepository.save(project);
+        return projectConverter.toResponse(project);
+    }
+
+    @Override
+    public ProjectResponse pauseProject(Long id) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PROJECT_NOT_FOUND));
+        project.setStatus(ProjectStatus.PAUSED);
+        projectRepository.save(project);
+        return projectConverter.toResponse(project);
+    }
 }

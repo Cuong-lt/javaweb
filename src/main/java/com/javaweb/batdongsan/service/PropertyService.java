@@ -17,4 +17,6 @@ public interface PropertyService {
     PropertyResponse update(Long id, @Valid PropertyUpdateRequest request);
 
     Void deleteById(Long id);
+
+
 }
